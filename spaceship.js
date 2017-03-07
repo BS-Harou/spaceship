@@ -358,7 +358,7 @@ function updateKills() {
 function randomEnemyGenerator() {
 	maxEnemies = 10 + Math.round(kills / 20);
 	if (enemies.length < maxEnemies && Math.random() < 0.04) {
-		createEnemy(Math.random() * (playground.width - 60), 50);
+		createEnemy(Math.random() * (playground.width - 60), -20);
 	}
 }
 
