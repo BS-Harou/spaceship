@@ -150,6 +150,7 @@ function createEnemy(x, y) {
 
 // HANDLE KEYS
 
+const SHOTPOWER = 8;
 const MULTISHOTPOWER = 40;
 const MEGAMULTISHOTPOWER = 70;
 const LASERPOWER = 100;
@@ -168,7 +169,9 @@ class Keys {
 
 	handleKeyUp(e) {
 		if (e.keyCode == Keys.SPACE) {
-			if (powerUp < MULTISHOTPOWER) {
+			if (powerUp < SHOTPOWER) {
+				// do nothing
+			} else if (powerUp < MULTISHOTPOWER) {
 				createShot(spaceship.x + spaceship.width / 2, spaceship.y, 0);
 			} else if (powerUp < MEGAMULTISHOTPOWER) {
 				createShot(spaceship.x + spaceship.width / 2, spaceship.y, -15);
@@ -244,8 +247,10 @@ function updateCurrentPower() {
 		currentPower.style.background = 'red';
 	} else if (powerUp > MULTISHOTPOWER) {
 		currentPower.style.background = 'yellow';
-	} else {
+	} else if (powerUp > SHOTPOWER) {
 		currentPower.style.background = 'green';
+	} else {
+		currentPower.style.background = 'gray';
 	}
 
 }
