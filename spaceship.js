@@ -17,14 +17,20 @@ class GameObject {
 		playground.add(this);
 		this._x = 0;
 		this._y = 0;
-		this.width = 0;
-		this.height = 0;
+		this._width = 0;
+		this._height = 0;
 	}
 	get x() {
 		return this._x;
 	}
 	get y() {
 		return this._y;
+	}
+	get width() {
+		return this._width;
+	}
+	get height() {
+		return this._height;
 	}
 	set x(val) {
 		this.el.style.left = Math.round(val) + 'px';
@@ -33,6 +39,14 @@ class GameObject {
 	set y(val) {
 		this.el.style.top = Math.round(val) + 'px';
 		this._y = val;
+	}
+	set width(val) {
+		this.el.style.width = Math.round(val) + 'px';
+		this._width = val;
+	}
+	set height(val) {
+		this.el.style.height = Math.round(val) + 'px';
+		this._height = val;
 	}
 }
 
@@ -63,6 +77,7 @@ var gameTime = {
 // SHOTS
 
 var shots = [];
+var powerUp = 0;
 
 class Shot extends GameObject {
 	constructor(x, y) {
@@ -76,10 +91,29 @@ class Shot extends GameObject {
 	}
 }
 
+class Laser extends GameObject {
+	constructor(x, y) {
+		super('laser');
+		this.width = 6;
+		this.height = 10;
+		this.x = x - this.width / 2;
+		this.y = y - this.height;
+		this.speed = 10;
+		this.life = 60;
+	}
+}
+
 function createShot(x, y) {
 	var shot = new Shot(x, y);
 	shots.push(shot);
 	return shot;
+}
+
+var lasers = [];
+function createLaser(x, y) {
+	var laser = new Laser(x, y);
+	lasers.push(laser);
+	return laser;
 }
 
 // ENEMIES
@@ -119,6 +153,15 @@ class Keys {
 	}
 
 	handleKeyUp(e) {
+		if (e.keyCode == Keys.SPACE) {
+			if (powerUp < 30) {
+				createShot(spaceship.x + spaceship.width / 2, spaceship.y);
+			} else {
+				createLaser(spaceship.x + spaceship.width / 2, spaceship.y);
+			}
+
+			powerUp = 0;
+		}
 		delete this.keys[e.keyCode];
 	}
 
@@ -148,20 +191,37 @@ function handleFrame() {
 
 	moveSpaceship();
 	moveShots();
+	moveLasers();
 	moveEnemies();
 	enemyShotHittest();
+	enemyLaserHittest();
 	randomEnemyGenerator();
 }
 requestAnimationFrame(handleFrame);
 
 function moveShots() {
 	for (var i=0; i<shots.length; i++) {
-		var shot = shots[i];
-		shot.y -= shot.speed;
-		shot.life--;
-		if (shot.life < 0) {
+		var item = shots[i];
+		item.y -= item.speed;
+		item.life--;
+		if (item.life < 0) {
 			shots.splice(i, 1);
-			playground.remove(shot);
+			playground.remove(item);
+			i--;
+		}
+	}
+}
+
+function moveLasers() {
+	for (var i=0; i<lasers.length; i++) {
+		var item = lasers[i];
+		item.y -= item.speed;
+		item.height += item.speed;
+		item.x = spaceship.x + spaceship.width / 2 - item.width / 2;
+		item.life--;
+		if (item.life < 0) {
+			lasers.splice(i, 1);
+			playground.remove(item);
 			i--;
 		}
 	}
@@ -207,6 +267,51 @@ function enemyShotHittest() {
 	}
 }
 
+function lineRectHittest(x1, y1, x2, y2, minX, minY, maxX, maxY) {
+    if ((x1 <= minX && x2 <= minX) || (y1 <= minY && y2 <= minY) || (x1 >= maxX && x2 >= maxX) || (y1 >= maxY && y2 >= maxY))
+        return false;
+
+    var m = (y2 - y1) / (x2 - x1);
+
+    var y = m * (minX - x1) + y1;
+    if (y > minY && y < maxY) return true;
+
+    y = m * (maxX - x1) + y1;
+    if (y > minY && y < maxY) return true;
+
+    var x = (minY - y1) / m + x1;
+    if (x > minX && x < maxX) return true;
+
+    x = (maxY - y1) / m + x1;
+    if (x > minX && x < maxX) return true;
+
+    return false;
+}
+
+function enemyLaserHittest() {
+	en: for (var i=0; i<enemies.length; i++) {
+		var enemy = enemies[i];
+		for (var n=0; n<lasers.length; n++) {
+			var laser = lasers[n];
+			var x1 = laser.x + laser.width / 2;
+			var y1 = laser.y;
+			var x2 = x1;
+			var y2 = laser.y + laser.height;
+			var minX = enemy.x
+			var minY = enemy.y;
+			var maxX = enemy.x + enemy.width;
+			var maxY = enemy.y + enemy.height;
+			var hit = lineRectHittest(x1, y1, x2, y2, minX, minY, maxX, maxY);
+			if (hit) {
+				enemies.splice(i, 1);
+				playground.remove(enemy);
+				updateKills();
+				continue en;
+			}
+		}
+	}
+}
+
 function updateKills() {
 	kills++;
 	counter.innerHTML = 'Killed: ' + kills;
@@ -240,7 +345,6 @@ function handleKeys() {
 	}
 
 	if (keys.keyDown(Keys.SPACE)) {
-		createShot(spaceship.x + spaceship.width / 2, spaceship.y);
-		keys.moveUp(Keys.SPACE);
+		powerUp = Math.min(powerUp + 1, 100);
 	}
 }
