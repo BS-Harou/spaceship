@@ -74,6 +74,7 @@ var spaceship = new Spaceship;
 var counter = document.querySelector('.counter');
 var kills = 0;
 var gameover = false;
+var baseFPS = 16;
 
 // GAME TIME
 var gameTime = {
@@ -188,6 +189,12 @@ class Keys {
 
 			powerUp = 0;
 		}
+		if (e.keyCode == Keys.PLUS) {
+			baseFPS++;
+		}
+		if (e.keyCode == Keys.MINUS) {
+			baseFPS = Math.max(baseFPS - 1, 1);
+		}
 		delete this.keys[e.keyCode];
 	}
 
@@ -206,6 +213,8 @@ class Keys {
 Keys.LEFT = 65;
 Keys.RIGHT = 68;
 Keys.SPACE = 32;
+Keys.PLUS = 107;
+Keys.MINUS = 109;
 var keys = new Keys;
 
 
@@ -215,7 +224,7 @@ var lastTime = 0;
 var delta = 0;
 function handleFrame(time) {
 	delta = time - lastTime;
-	if (delta > 1000) delta = 16;
+	if (delta > 1000) delta = baseFPS;
 	lastTime = time;
 
 	if (gameover) {
@@ -238,7 +247,7 @@ function handleFrame(time) {
 requestAnimationFrame(handleFrame);
 
 function deltaSpeed(speed) {
-	return speed / 16 * delta;
+	return speed / baseFPS * delta;
 }
 
 function moveShots() {
@@ -377,7 +386,7 @@ function updateKills() {
 
 function randomEnemyGenerator() {
 	maxEnemies = 10 + Math.round(kills / 20);
-	if (enemies.length < maxEnemies && Math.random() < deltaSpeed(0.04)) {
+	if (enemies.length < maxEnemies && Math.random() < deltaSpeed(0.05)) {
 		createEnemy(Math.random() * (playground.width - 60), -20);
 	}
 }
