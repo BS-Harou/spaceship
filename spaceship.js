@@ -210,8 +210,10 @@ class Keys {
 		delete this.keys[keyCode];
 	}
 };
-Keys.LEFT = 65;
-Keys.RIGHT = 68;
+Keys.LEFT = 37;
+Keys.RIGHT = 39;
+Keys.A = 65;
+Keys.D = 68;
 Keys.SPACE = 32;
 Keys.PLUS = 107;
 Keys.MINUS = 109;
@@ -412,9 +414,9 @@ function moveSpaceship() {
 }
 
 function handleKeys() {
-	if (keys.keyDown(Keys.LEFT)) {
+	if (keys.keyDown(Keys.LEFT) || keys.keyDown(Keys.A)) {
 		spaceship.speed -= deltaSpeed(0.3);
-	} else if (keys.keyDown(Keys.RIGHT)) {
+	} else if (keys.keyDown(Keys.RIGHT) || keys.keyDown(Keys.D)) {
 		spaceship.speed += deltaSpeed(0.3);
 	}
 
