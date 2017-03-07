@@ -19,6 +19,7 @@ class GameObject {
 		this._y = 0;
 		this._width = 0;
 		this._height = 0;
+		this._rot = 0;
 	}
 	get x() {
 		return this._x;
@@ -31,6 +32,9 @@ class GameObject {
 	}
 	get height() {
 		return this._height;
+	}
+	get rot() {
+		return this._rot;
 	}
 	set x(val) {
 		this.el.style.left = Math.round(val) + 'px';
@@ -47,6 +51,10 @@ class GameObject {
 	set height(val) {
 		this.el.style.height = Math.round(val) + 'px';
 		this._height = val;
+	}
+	set rot(val) {
+		this.el.style.transform = 'rotate(' + Math.round(val) + 'deg)';
+		this._rot = val;
 	}
 }
 
@@ -78,14 +86,16 @@ var gameTime = {
 
 var shots = [];
 var powerUp = 0;
+var currentPower = document.querySelector('.current-power');
 
 class Shot extends GameObject {
-	constructor(x, y) {
+	constructor(x, y, rot=0) {
 		super('shot');
 		this.width = 2;
 		this.height = 5;
 		this.x = x - this.width / 2;
 		this.y = y;
+		this.rot = rot;
 		this.speed = 4;
 		this.life = 200;
 	}
@@ -103,8 +113,8 @@ class Laser extends GameObject {
 	}
 }
 
-function createShot(x, y) {
-	var shot = new Shot(x, y);
+function createShot(x, y, rot) {
+	var shot = new Shot(x, y, rot);
 	shots.push(shot);
 	return shot;
 }
@@ -140,6 +150,9 @@ function createEnemy(x, y) {
 
 // HANDLE KEYS
 
+const MULTISHOTPOWER = 30;
+const LASERPOWER = 70;
+
 class Keys {
 	constructor() {
 		this.keys = {};
@@ -154,8 +167,12 @@ class Keys {
 
 	handleKeyUp(e) {
 		if (e.keyCode == Keys.SPACE) {
-			if (powerUp < 30) {
-				createShot(spaceship.x + spaceship.width / 2, spaceship.y);
+			if (powerUp < MULTISHOTPOWER) {
+				createShot(spaceship.x + spaceship.width / 2, spaceship.y, 0);
+			} else if (powerUp < LASERPOWER) {
+				createShot(spaceship.x + spaceship.width / 2, spaceship.y, -15);
+				createShot(spaceship.x + spaceship.width / 2, spaceship.y, 0);
+				createShot(spaceship.x + spaceship.width / 2, spaceship.y, 15);
 			} else {
 				createLaser(spaceship.x + spaceship.width / 2, spaceship.y);
 			}
@@ -195,6 +212,7 @@ function handleFrame() {
 	moveEnemies();
 	enemyShotHittest();
 	enemyLaserHittest();
+	updateCurrentPower();
 	randomEnemyGenerator();
 }
 requestAnimationFrame(handleFrame);
@@ -202,7 +220,8 @@ requestAnimationFrame(handleFrame);
 function moveShots() {
 	for (var i=0; i<shots.length; i++) {
 		var item = shots[i];
-		item.y -= item.speed;
+		item.x += Math.sin(item.rot * (Math.PI/180)) * item.speed;
+		item.y -= Math.cos(item.rot * (Math.PI/180)) * item.speed;
 		item.life--;
 		if (item.life < 0) {
 			shots.splice(i, 1);
@@ -210,6 +229,18 @@ function moveShots() {
 			i--;
 		}
 	}
+}
+
+function updateCurrentPower() {
+	currentPower.style.height = Math.round(powerUp) + '%';
+	if (powerUp > LASERPOWER) {
+		currentPower.style.background = 'red';
+	} else if (powerUp > MULTISHOTPOWER) {
+		currentPower.style.background = 'yellow';
+	} else {
+		currentPower.style.background = 'green';
+	}
+
 }
 
 function moveLasers() {
