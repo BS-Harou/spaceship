@@ -1,5 +1,6 @@
 .playground {
-	background: black;
+	background: url(bg.jpg);
+	background-size: cover;
 	position: absolute;
 	top: 50%;
 	left: 50%;
@@ -12,25 +13,24 @@
 
 .spaceship {
 	position: absolute;
-	background: url('spaceship.png');
+	background: url('ship.svg');
 	background-size: 100%  100%;
 	width: 40px;
-	height: 40px;
+	height: 50px;
 }
 
 .shot {
 	position: absolute;
-	background: orange;
-	width: 2px;
-	height: 5px;
+	background: purple;
+	width: 6px;
+	height: 20px;
+	border-radius: 6px;
 }
 
 .enemy {
 	position: absolute;
-	background: url('enemy1.png');
-	background-size: 100% 100%;
-	width: 60px;
-	height: 40px;
+	width: 48px;
+	height: 48px;
 }
 
 .counter {
@@ -39,10 +39,12 @@
 	left: 50%;
 	width: 400px;
 	height: 30px;
-	margin-top: -300px;
-	margin-left: -200px;
+	margin-top: -270px;
+	margin-left: -190px;
 	font-size: 20px;
-	font-weight: bold;
+	color: #eee;
+	font-family: Arial;
+	z-index: 10;
 }
 
 .laser {
@@ -74,4 +76,206 @@
 	height: 0px;
 	background: red;
 	position: absolute;
+}
+
+
+/*Enemy by JS*/
+.enemy-guts {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  display: inline-block;
+}
+
+.cabine {
+  background: #dfe0e0;
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  width: 24px;
+  height: 8px;
+  z-index: 40;
+}
+
+.cabine:before {
+	content: '';
+	background: #dfe0e0;
+	width: 24px;
+	height: 24px;
+	position: absolute;
+	top: -12px;
+	left: 0;
+	border-radius: 14px;
+}
+
+.cabine:after {
+  content: '';
+  background: #dfe0e0;
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  bottom: -12px;
+  left: 0;
+  border-radius: 14px;
+  transform: scaleY(.5);
+}
+
+.head {
+  background: #46b59d;
+  width: 16px;
+  height: 18px;
+  position: absolute;
+  top: -6px;
+  left: 4px;
+  border-radius: 8px 8px 0 0;
+  z-index: 30;
+}
+
+.head:after {
+	content: '';
+	background: #46b59d;
+	width: 16px;
+	height: 16px;
+	position: absolute;
+	bottom: -8px;
+	border-radius: 10px;
+	transform: scaleY(.3);
+}
+
+.eye {
+  background: white;
+  width: 8px;
+  height: 8px;
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  border-radius: 6px;
+}
+
+.eye:after {
+	content: '';
+	background: #9e2635;
+	width: 3px;
+	height: 3px;
+	position: absolute;
+	top: 3px;
+	left: 1px;
+	border-radius: 2px;
+	animation: eye 1.2s ease infinite;
+}
+
+.ship {
+  width: 0;
+  height: 0;
+  position: absolute;
+  top: 1px;
+  left: 4px;
+  border-radius: 24px;
+  border: 22px solid;
+  border-color: transparent transparent #6073bc #6073bc;
+  transform: rotate(-45deg);
+  z-index: 10;
+}
+
+.ship:before {
+	content: '';
+	background: #6d85bc;
+	width: 44px;
+	height: 44px;
+	position: absolute;
+	top: -22px;
+	left: -22px;
+	border-radius: 42px;
+	transform: rotate(45deg) scaleY(0.5);
+}
+
+.fire1 {
+  background: #f9b20f;
+  width: 6px;
+  height: 16px;
+  position: absolute;
+  top: 30px;
+  left: 8px;
+  border-radius: 0 0 5px 5px;
+  animation: fire13 .8s linear infinite;
+}
+
+.fire2 {
+  background: #f9b20f;
+  width: 6px;
+  height: 16px;
+  position: absolute;
+  top: 35px;
+  left: 22px;
+  border-radius: 0 0 5px 5px;
+  animation: fire2 .8s linear .1s infinite;
+}
+
+.fire3 {
+  background: #f9b20f;
+  width: 6px;
+  height: 16px;
+  position: absolute;
+  top: 30px;
+  left: 36px;
+  border-radius: 0 0 5px 5px;
+  animation: fire13 .8s linear .2s infinite;
+}
+
+@keyframes eye {
+  0% {
+    left: 1px;
+  }
+
+  50% {
+    left: 3px;
+  }
+
+  100% {
+    left: 1px;
+  }
+}
+
+@keyframes fire13 {
+  0% {
+    top: 30px;
+  }
+
+  25% {
+    top: 31px;
+  }
+
+  50% {
+    top: 30px;
+  }
+
+  75% {
+    top: 28px;
+  }
+
+  100% {
+    top: 30px;
+  }
+}
+
+@keyframes fire2 {
+  0% {
+    top: 35px;
+  }
+
+  25% {
+    top: 36px;
+  }
+
+  50% {
+    top: 35px;
+  }
+
+  75% {
+    top: 33px;
+  }
+
+  100% {
+    top: 35px;
+  }
 }
