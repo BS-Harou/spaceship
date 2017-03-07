@@ -48,6 +48,18 @@ class Spaceship extends GameObject {
 }
 var spaceship = new Spaceship;
 
+// COUNTER
+var counter = document.querySelector('.counter');
+var kills = 0;
+
+// GAME TIME
+var gameTime = {
+	start: Date.now(),
+	getTime: function() {
+		return Math.min(Date.now() - this.start);
+	}
+};
+
 // SHOTS
 
 var shots = [];
@@ -81,7 +93,8 @@ class Enemy extends GameObject {
 		this.x = x - this.width / 2;
 		this.y = y;
 		this.speedX = Math.random() - 0.5;
-		this.speedY = -Math.random() * 0.85;
+		var speedUp = Math.min(kills / 300, 2);
+		this.speedY = -Math.random() * 0.85 - (speedUp * 2);
 	}
 }
 
@@ -167,7 +180,7 @@ function moveEnemies() {
 		}
 
 		if (enemy.y + enemy.height > playground.height) {
-			alert('GAME OVER');
+			alert('GAME OVER. SCORE: ' + kills);
 			location.reload();
 			break;
 		}
@@ -186,11 +199,17 @@ function enemyShotHittest() {
 
 					shots.splice(n, 1);
 					playground.remove(shot);
+					updateKills();
 					continue en;
 				}
 			}
 		}
 	}
+}
+
+function updateKills() {
+	kills++;
+	counter.innerHTML = 'Killed: ' + kills;
 }
 
 function randomEnemyGenerator() {
