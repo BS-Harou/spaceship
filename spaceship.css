@@ -161,7 +161,7 @@
 	top: 3px;
 	left: 1px;
 	border-radius: 2px;
-	animation: eye 1.2s ease infinite;
+	/*animation: eye 1.2s ease infinite;*/
 }
 
 .ship {
@@ -197,7 +197,7 @@
   top: 30px;
   left: 8px;
   border-radius: 0 0 5px 5px;
-  animation: fire13 .8s linear infinite;
+  /*animation: fire13 .8s linear infinite;*/
 }
 
 .fire2 {
@@ -208,7 +208,7 @@
   top: 35px;
   left: 22px;
   border-radius: 0 0 5px 5px;
-  animation: fire2 .8s linear .1s infinite;
+  /*animation: fire2 .8s linear .1s infinite;*/
 }
 
 .fire3 {
@@ -219,7 +219,7 @@
   top: 30px;
   left: 36px;
   border-radius: 0 0 5px 5px;
-  animation: fire13 .8s linear .2s infinite;
+  /*animation: fire13 .8s linear .2s infinite;*/
 }
 
 @keyframes eye {
