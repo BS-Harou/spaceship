@@ -91,8 +91,8 @@ var currentPower = document.querySelector('.current-power');
 class Shot extends GameObject {
 	constructor(x, y, rot=0) {
 		super('shot');
-		this.width = 2;
-		this.height = 5;
+		this.width = 6;
+		this.height = 20;
 		this.x = x - this.width / 2;
 		this.y = y;
 		this.rot = rot;
@@ -132,6 +132,7 @@ var enemies = [];
 class Enemy extends GameObject {
 	constructor(x, y) {
 		super('enemy');
+		this.el.innerHTML = "<div class='emeny-gut'><div class='cabine'><div class='head'><div class='eye'></div></div></div><div class='ship'></div><div class='fire1'></div><div class='fire2'></div><div class='fire3'></div></div>";
 		this.width = 60;
 		this.height = 40;
 		this.x = x - this.width / 2;
