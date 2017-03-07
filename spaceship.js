@@ -73,6 +73,7 @@ var spaceship = new Spaceship;
 // COUNTER
 var counter = document.querySelector('.counter');
 var kills = 0;
+var gameover = false;
 
 // GAME TIME
 var gameTime = {
@@ -214,7 +215,15 @@ var lastTime = 0;
 var delta = 0;
 function handleFrame(time) {
 	delta = time - lastTime;
+	if (delta > 1000) delta = 16;
 	lastTime = time;
+
+	if (gameover) {
+		alert('GAME OVER. SCORE: ' + kills);
+		location.reload();
+		return;
+	}
+
 	handleKeys();
 	moveSpaceship();
 	moveShots();
@@ -290,8 +299,7 @@ function moveEnemies() {
 		}
 
 		if (enemy.y + enemy.height > playground.height) {
-			alert('GAME OVER. SCORE: ' + kills);
-			location.reload();
+			gameover = true;
 			break;
 		}
 	}
