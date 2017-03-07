@@ -210,10 +210,12 @@ var keys = new Keys;
 
 // ANIMATION FRAME
 
-function handleFrame() {
+var lastTime = 0;
+var delta = 0;
+function handleFrame(time) {
+	delta = time - lastTime;
+	lastTime = time;
 	handleKeys();
-	requestAnimationFrame(handleFrame);
-
 	moveSpaceship();
 	moveShots();
 	moveLasers();
@@ -222,15 +224,20 @@ function handleFrame() {
 	enemyLaserHittest();
 	updateCurrentPower();
 	randomEnemyGenerator();
+	requestAnimationFrame(handleFrame);
 }
 requestAnimationFrame(handleFrame);
+
+function deltaSpeed(speed) {
+	return speed / 16 * delta;
+}
 
 function moveShots() {
 	for (var i=0; i<shots.length; i++) {
 		var item = shots[i];
-		item.x += Math.sin(item.rot * (Math.PI/180)) * item.speed;
-		item.y -= Math.cos(item.rot * (Math.PI/180)) * item.speed;
-		item.life--;
+		item.x += Math.sin(item.rot * (Math.PI/180)) * deltaSpeed(item.speed);
+		item.y -= Math.cos(item.rot * (Math.PI/180)) * deltaSpeed(item.speed);
+		item.life -= deltaSpeed(1);
 		if (item.life < 0) {
 			shots.splice(i, 1);
 			playground.remove(item);
@@ -258,10 +265,10 @@ function updateCurrentPower() {
 function moveLasers() {
 	for (var i=0; i<lasers.length; i++) {
 		var item = lasers[i];
-		item.y -= item.speed;
-		item.height += item.speed;
+		item.y -= deltaSpeed(item.speed);
+		item.height += deltaSpeed(item.speed);
 		item.x = spaceship.x + spaceship.width / 2 - item.width / 2;
-		item.life--;
+		item.life -= deltaSpeed(1);
 		if (item.life < 0) {
 			lasers.splice(i, 1);
 			playground.remove(item);
@@ -273,8 +280,8 @@ function moveLasers() {
 function moveEnemies() {
 	for (var i=0; i<enemies.length; i++) {
 		var enemy = enemies[i];
-		enemy.y -= enemy.speedY;
-		enemy.x += enemy.speedX;
+		enemy.y -= deltaSpeed(enemy.speedY);
+		enemy.x += deltaSpeed(enemy.speedX);
 
 		if (enemy.x < 0) {
 			enemy.speedX = Math.abs(enemy.speedX);
@@ -362,15 +369,21 @@ function updateKills() {
 
 function randomEnemyGenerator() {
 	maxEnemies = 10 + Math.round(kills / 20);
-	if (enemies.length < maxEnemies && Math.random() < 0.04) {
+	if (enemies.length < maxEnemies && Math.random() < deltaSpeed(0.04)) {
 		createEnemy(Math.random() * (playground.width - 60), -20);
 	}
 }
 
 function moveSpaceship() {
 	spaceship.y = 500;
-	spaceship.x += spaceship.speed;
-	spaceship.speed *= 0.96;
+	spaceship.x += deltaSpeed(spaceship.speed);
+	if (spaceship.speed != 0) {
+		var diff = deltaSpeed(spaceship.speed - spaceship.speed * 0.96);
+		spaceship.speed -= diff;
+		if (Math.abs(spaceship.speed) < 0.01) {
+			spaceship.speed = 0;
+		}
+	}
 
 	if (spaceship.x < 0) {
 		spaceship.x = 0;
@@ -383,12 +396,12 @@ function moveSpaceship() {
 
 function handleKeys() {
 	if (keys.keyDown(Keys.LEFT)) {
-		spaceship.speed -= 0.3;
+		spaceship.speed -= deltaSpeed(0.3);
 	} else if (keys.keyDown(Keys.RIGHT)) {
-		spaceship.speed += 0.3;
+		spaceship.speed += deltaSpeed(0.3);
 	}
 
 	if (keys.keyDown(Keys.SPACE) && !lasers.length) {
-		powerUp = Math.min(powerUp + 1, 100);
+		powerUp = Math.min(powerUp + deltaSpeed(1), 100);
 	}
 }
