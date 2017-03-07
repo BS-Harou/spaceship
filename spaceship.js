@@ -150,8 +150,9 @@ function createEnemy(x, y) {
 
 // HANDLE KEYS
 
-const MULTISHOTPOWER = 30;
-const LASERPOWER = 70;
+const MULTISHOTPOWER = 40;
+const MEGAMULTISHOTPOWER = 70;
+const LASERPOWER = 100;
 
 class Keys {
 	constructor() {
@@ -169,10 +170,14 @@ class Keys {
 		if (e.keyCode == Keys.SPACE) {
 			if (powerUp < MULTISHOTPOWER) {
 				createShot(spaceship.x + spaceship.width / 2, spaceship.y, 0);
-			} else if (powerUp < LASERPOWER) {
+			} else if (powerUp < MEGAMULTISHOTPOWER) {
 				createShot(spaceship.x + spaceship.width / 2, spaceship.y, -15);
 				createShot(spaceship.x + spaceship.width / 2, spaceship.y, 0);
 				createShot(spaceship.x + spaceship.width / 2, spaceship.y, 15);
+			} else  if (powerUp < LASERPOWER) {
+				for (var i=-20; i<=20; i += 4) {
+					createShot(spaceship.x + spaceship.width / 2, spaceship.y, i);
+				}
 			} else {
 				createLaser(spaceship.x + spaceship.width / 2, spaceship.y);
 			}
@@ -233,7 +238,9 @@ function moveShots() {
 
 function updateCurrentPower() {
 	currentPower.style.height = Math.round(powerUp) + '%';
-	if (powerUp > LASERPOWER) {
+	if (powerUp >= LASERPOWER) {
+		currentPower.style.background = 'blue';
+	} else if (powerUp > MEGAMULTISHOTPOWER) {
 		currentPower.style.background = 'red';
 	} else if (powerUp > MULTISHOTPOWER) {
 		currentPower.style.background = 'yellow';
@@ -375,7 +382,7 @@ function handleKeys() {
 		spaceship.speed += 0.3;
 	}
 
-	if (keys.keyDown(Keys.SPACE)) {
+	if (keys.keyDown(Keys.SPACE) && !lasers.length) {
 		powerUp = Math.min(powerUp + 1, 100);
 	}
 }
